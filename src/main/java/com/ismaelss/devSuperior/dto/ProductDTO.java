@@ -1,40 +1,27 @@
-package com.ismaelss.devSuperior.entities;
+package com.ismaelss.devSuperior.dto;
 
-import jakarta.persistence.*;
+import com.ismaelss.devSuperior.entities.Category;
+import com.ismaelss.devSuperior.entities.Product;
+import jakarta.persistence.Column;
 
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
-@Entity
-@Table(name = "tb_product")
-public class Product {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class ProductDTO {
     private Long id;
     private String name;
-    @Column(columnDefinition = "TEXT")
     private String description;
     private Double price;
     private String imgUrl;
-
-    @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
     private Instant date;
 
-    @ManyToMany
-    @JoinTable(
-            name = "tb_product_category",
-            joinColumns = @JoinColumn(name = "product_id"),
-            inverseJoinColumns = @JoinColumn(name = "category_id")
-    )
+    private List<CategoryDTO> categories= new ArrayList<>();
 
-    private Set<Category> categories = new HashSet<>();
+    public ProductDTO(){};
 
-    public Product() {
-    }
-
-    public Product(Long id, String name, String description, Double price, String imgUrl, Instant date) {
+    public ProductDTO(Long id, String name, String description, Double price, String imgUrl, Instant date) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -43,17 +30,20 @@ public class Product {
         this.date = date;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        Product product = (Product) o;
-        return Objects.equals(id, product.id);
+    public ProductDTO(Product entity) {
+        this.id = entity.getId();
+        this.name = entity.getName();
+        this.description = entity.getDescription();
+        this.price = entity.getPrice();
+        this.imgUrl = entity.getImgUrl();
+        this.date = entity.getDate();
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(id);
+    public ProductDTO(Product entity, Set<Category> categories) {
+        this(entity);
+        categories.forEach(cat -> this.categories.add(new CategoryDTO(cat)));
     }
+
 
     public Long getId() {
         return id;
@@ -103,12 +93,8 @@ public class Product {
         this.date = date;
     }
 
-    public Set<Category> getCategories() {
+    public List<CategoryDTO> getCategories() {
         return categories;
     }
 
-    public void setCategories(Set<Category> categories) {
-        this.categories = categories;
-    }
 }
-

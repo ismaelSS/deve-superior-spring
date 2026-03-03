@@ -1,6 +1,7 @@
 package com.ismaelss.devSuperior.dto;
 
 import com.ismaelss.devSuperior.entities.Category;
+import com.ismaelss.devSuperior.entities.Product;
 
 import java.util.Objects;
 
