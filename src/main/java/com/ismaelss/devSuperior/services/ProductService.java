@@ -8,12 +8,11 @@ import com.ismaelss.devSuperior.exceptions.DatabaseException;
 import com.ismaelss.devSuperior.exceptions.ResourceNotFoundException;
 import com.ismaelss.devSuperior.repositories.CategoryRepository;
 import com.ismaelss.devSuperior.repositories.ProductRepository;
-import jakarta.persistence.Entity;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,8 +29,8 @@ public class ProductService {
     private CategoryRepository categoryRepository;
 
     @Transactional(readOnly = true)
-    public Page<ProductDTO> findALlPaged(PageRequest pageRequest) {
-        Page<Product> list = repository.findAll(pageRequest);
+    public Page<ProductDTO> findALlPaged(Pageable pageable) {
+        Page<Product> list = repository.findAll(pageable);
 
         return list.map(ProductDTO::new);
     }
@@ -76,7 +75,7 @@ public class ProductService {
         }
     }
 
-    private void copyDtoToEntity(ProductDTO dto,Product entity){
+    private void copyDtoToEntity(ProductDTO dto, Product entity) {
         entity.setName(dto.getName());
         entity.setDescription(dto.getDescription());
         entity.setDate(dto.getDate());
@@ -84,7 +83,7 @@ public class ProductService {
         entity.setPrice(dto.getPrice());
 
         entity.getCategories().clear();
-        for(CategoryDTO catDto: dto.getCategories()){
+        for (CategoryDTO catDto : dto.getCategories()) {
             Category category = categoryRepository.getReferenceById(catDto.getId());
             entity.getCategories().add(category);
         }
